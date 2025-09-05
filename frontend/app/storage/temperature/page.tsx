@@ -1,3 +1,4 @@
+"use client"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -6,73 +7,49 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { Thermometer, Settings, AlertTriangle, TrendingUp, TrendingDown, RefreshCw, Power } from "lucide-react"
+import axios, { all } from "axios"
+import { useEffect, useState } from "react"
 
 export default function TemperatureControl() {
   // Mock data - in real app this would come from real-time sensors and controls
   // TODO: Subscribe to WebSocket/Server-Sent Events for real-time telemetry (e.g., ws://.../storage/units)
   // TODO: On control updates, call POST /api/storage/units/:id/target { targetTemp, targetHumidity }
-  const temperatureUnits = [
-    {
-      id: "A-1",
-      name: "Cold Storage Unit A-1",
-      product: "Organic Tomatoes",
-      currentTemp: 4.1,
-      targetTemp: 4.0,
-      targetRange: "2-4°C",
-      status: "optimal",
-      powerStatus: "on",
-      humidity: 85,
-      targetHumidity: 90,
-      lastMaintenance: "2024-01-10",
-      trend: "stable",
-      alerts: [],
-    },
-    {
-      id: "A-2",
-      name: "Cold Storage Unit A-2",
-      product: "Fresh Lettuce",
-      currentTemp: 6.2,
-      targetTemp: 3.5,
-      targetRange: "1-3°C",
-      status: "warning",
-      powerStatus: "on",
-      humidity: 78,
-      targetHumidity: 95,
-      lastMaintenance: "2024-01-08",
-      trend: "rising",
-      alerts: ["Temperature above target", "Humidity below optimal"],
-    },
-    {
-      id: "B-1",
-      name: "Cold Storage Unit B-1",
-      product: "Bell Peppers",
-      currentTemp: 4.5,
-      targetTemp: 4.0,
-      targetRange: "3-5°C",
-      status: "optimal",
-      powerStatus: "on",
-      humidity: 88,
-      targetHumidity: 85,
-      lastMaintenance: "2024-01-12",
-      trend: "falling",
-      alerts: [],
-    },
-    {
-      id: "B-2",
-      name: "Cold Storage Unit B-2",
-      product: "Baby Carrots",
-      currentTemp: 8.1,
-      targetTemp: 2.0,
-      targetRange: "0-2°C",
-      status: "critical",
-      powerStatus: "on",
-      humidity: 65,
-      targetHumidity: 98,
-      lastMaintenance: "2024-01-05",
-      trend: "rising",
-      alerts: ["Critical temperature deviation", "Cooling system malfunction", "Humidity critically low"],
-    },
-  ]
+  type TemperatureUnits = {
+    id: string;
+    name: string;
+    product: string;
+    currentTemp: number;
+    targetTemp: number;
+    targetRange: string;
+    status: string;
+    powerStatus: string;
+    humidity: number;
+    targetHumidity: number;
+    lastMaintenance: string;
+    trend: string;
+    alerts: string[];
+
+  }
+  
+  const fetchData = async <T,>(url:string): Promise<T> => {
+    const response = await axios.get<T>(url);
+    return response.data;
+  };
+
+  const [temperatureUnits, setTempUnit] = useState<TemperatureUnits[]>([]);
+
+  useEffect(() => {
+    (async () =>{
+      try{
+        const [tempData] = await Promise.all([
+          fetchData<TemperatureUnits[]>("http://127.0.0.1:8000/storage/temperature/units"),
+        ]);
+        setTempUnit(tempData);
+      }catch(error){
+        console.error("Error fetching temperature data", error);
+      }
+    })();
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {

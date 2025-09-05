@@ -1,97 +1,84 @@
+"use client"
+
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Warehouse, Thermometer, Package, TrendingUp, AlertTriangle, Clock, CheckCircle } from "lucide-react"
+import { useEffect, useState } from "react"
+import axios from "axios"
 
 export default function StorageDashboard() {
   // Mock data - in real app this would come from API
-  const stats = {
-    totalCapacity: 10000,
-    currentOccupancy: 7500,
-    activeUnits: 12,
-    pendingOffers: 8,
-    avgTemperature: 3.8,
-    alertsCount: 3,
+    type Stats = {
+    totalCapacity: number;
+    currentOccupancy: number;
+    activeUnits: number;
+    pendingOffers: number;
+    avgTemperature: number;
+    alertsCount: number;
+  };
+
+  type StorageUnit = {
+  id: string;
+  product: string;
+  capacity: number;
+  occupied: number;
+  temp: number;
+  targetTemp: number;
+  status: string;
+};
+
+  type PendingOffer = {
+    id: string;
+    farmer: string;
+    product: string;
+    quantity: number;
+    unit: string;
+    price: number;
+    submitted: string;
   }
 
-  const storageUnits = [
-    {
-      id: "A-1",
-      product: "Organic Tomatoes",
-      capacity: 1000,
-      occupied: 500,
-      temp: 4.1,
-      targetTemp: 4.0,
-      status: "optimal",
-    },
-    {
-      id: "A-2",
-      product: "Fresh Lettuce",
-      capacity: 800,
-      occupied: 200,
-      temp: 6.2,
-      targetTemp: 3.5,
-      status: "warning",
-    },
-    {
-      id: "B-1",
-      product: "Bell Peppers",
-      capacity: 1200,
-      occupied: 300,
-      temp: 4.5,
-      targetTemp: 4.0,
-      status: "optimal",
-    },
-    {
-      id: "B-2",
-      product: "Baby Carrots",
-      capacity: 900,
-      occupied: 150,
-      temp: 8.1,
-      targetTemp: 2.0,
-      status: "critical",
-    },
-  ]
+  type RecentDeliveries = {
+    id: string;
+    buyer: string;
+    product: string;
+    quantity: number;
+    status: string;
+    time: string;
 
-  const pendingOffers = [
-    {
-      id: 1,
-      farmer: "Juan Dela Cruz",
-      product: "Organic Cabbage",
-      quantity: 400,
-      unit: "kg",
-      price: 2400,
-      submitted: "2 hours ago",
-    },
-    {
-      id: 2,
-      farmer: "Maria Santos",
-      product: "Sweet Corn",
-      quantity: 600,
-      unit: "kg",
-      price: 3000,
-      submitted: "4 hours ago",
-    },
-    {
-      id: 3,
-      farmer: "Pedro Garcia",
-      product: "Green Beans",
-      quantity: 250,
-      unit: "kg",
-      price: 1750,
-      submitted: "6 hours ago",
-    },
-  ]
+  }
 
-  const recentDeliveries = [
-    { id: 1, buyer: "Metro Market", product: "Organic Tomatoes", quantity: 200, status: "completed", time: "10:30 AM" },
-    { id: 2, buyer: "Fresh Mart", product: "Fresh Lettuce", quantity: 150, status: "in-transit", time: "2:00 PM" },
-    { id: 3, buyer: "City Grocers", product: "Bell Peppers", quantity: 100, status: "scheduled", time: "4:30 PM" },
-  ]
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [storageUnits, setStorageUnits] = useState<StorageUnit[]>([]);
+  const [pendingOffers, setPendingOffers] = useState<PendingOffer[]>([]);
+  const [recentDeliveries, setRecentDeliveries] = useState<RecentDeliveries[]>([]);
+  const fetchData = async <T,>(url: string): Promise<T> => {
+    const response = await axios.get<T>(url);
+    return response.data;
+  };
 
-  const occupancyPercentage = (stats.currentOccupancy / stats.totalCapacity) * 100
+  useEffect(() => {
+    (async () => {
+      try {
+        const [statsData, unitsData, offersData, deliveriesData] = await Promise.all([
+          fetchData<Stats>("http://127.0.0.1:8000/storage/dashboard/stats"),
+          fetchData<StorageUnit[]>("http://127.0.0.1:8000/storage/dashboard/units"),
+          fetchData<PendingOffer[]>("http://127.0.0.1:8000/storage/dashboard/offers"),
+          fetchData<RecentDeliveries[]>("http://127.0.0.1:8000/storage/dashboard/deliveries"),
+        ]);
+        setStats(statsData);
+        setStorageUnits(unitsData);
+        setPendingOffers(offersData);
+        setRecentDeliveries(deliveriesData);
+      } catch (error) {
+        console.error("Error fetching dashboard data", error);
+      }
+    })();
+}, []);
+
+  const occupancyPercentage = ((stats?.currentOccupancy ?? 0) / (stats?.totalCapacity ?? 1)) * 100;
 
   return (
     <DashboardLayout userRole="storage" title="Storage House Dashboard">
@@ -106,7 +93,7 @@ export default function StorageDashboard() {
             <CardContent>
               <div className="text-2xl font-bold text-primary">{occupancyPercentage.toFixed(1)}%</div>
               <p className="text-xs text-muted-foreground">
-                {stats.currentOccupancy}/{stats.totalCapacity} kg
+                {stats?.currentOccupancy}/{stats?.totalCapacity} kg
               </p>
               <Progress value={occupancyPercentage} className="mt-2 h-2" />
             </CardContent>
@@ -118,7 +105,7 @@ export default function StorageDashboard() {
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.activeUnits}</div>
+              <div className="text-2xl font-bold text-primary">{stats?.activeUnits}</div>
               <p className="text-xs text-muted-foreground">Storage units in use</p>
             </CardContent>
           </Card>
@@ -129,7 +116,7 @@ export default function StorageDashboard() {
               <Thermometer className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.avgTemperature}°C</div>
+              <div className="text-2xl font-bold text-primary">{stats?.avgTemperature}°C</div>
               <p className="text-xs text-muted-foreground">Across all units</p>
             </CardContent>
           </Card>
@@ -140,7 +127,7 @@ export default function StorageDashboard() {
               <AlertTriangle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-destructive">{stats.alertsCount}</div>
+              <div className="text-2xl font-bold text-destructive">{stats?.alertsCount}</div>
               <p className="text-xs text-muted-foreground">Requires attention</p>
             </CardContent>
           </Card>
@@ -155,7 +142,7 @@ export default function StorageDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {storageUnits.map((unit) => (
+                {storageUnits?.map((unit) => (
                   <div key={unit.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
@@ -202,7 +189,7 @@ export default function StorageDashboard() {
                 <CardTitle>Pending Offers</CardTitle>
                 <CardDescription>Farmer submissions awaiting approval</CardDescription>
               </div>
-              <Badge variant="outline">{stats.pendingOffers} pending</Badge>
+              <Badge variant="outline">{stats?.pendingOffers} pending</Badge>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
