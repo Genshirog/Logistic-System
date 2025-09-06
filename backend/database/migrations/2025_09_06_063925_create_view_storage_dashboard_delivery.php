@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        DB::statement("DROP VIEW IF EXISTS deliveriesDashboard");
         DB::statement("
         CREATE VIEW deliveriesDashboard AS
 SELECT
@@ -32,6 +33,6 @@ ORDER BY STR_TO_DATE(d.scheduledTime, '%h:%i %p') ASC
      */
     public function down(): void
     {
-        DB::statement("DROP VIEW deliveriesDashboard");
+        DB::statement("DROP VIEW IF EXISTS deliveriesDashboard");
     }
 };

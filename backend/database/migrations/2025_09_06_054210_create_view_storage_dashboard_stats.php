@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up()
 {
+    DB::statement("DROP VIEW IF EXISTS storageStats");
     DB::statement("
         CREATE VIEW storageStats AS
         SELECT
@@ -36,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("DROP VIEW storageStats");
+        DB::statement("DROP VIEW IF EXISTS storageStats");
     }
 };

@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        DB::statement("DROP VIEW IF EXISTS offersDashboard");
         DB::statement("CREATE VIEW offersDashboard AS
 SELECT
     st.id,
@@ -32,6 +33,6 @@ WHERE st.status = 'pending';
      */
     public function down(): void
     {
-        DB::statement("DROP VIEW offersDashboard");
+        DB::statement("DROP VIEW IF EXISTS offersDashboard");
     }
 };

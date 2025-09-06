@@ -12,7 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("CREATE VIEW storageDashboard AS
+        DB::statement("DROP VIEW IF EXISTS storageDashboard");
+        DB::statement("
+        CREATE VIEW storageDashboard AS
 SELECT
     s.id AS storage_id,
     s.name AS unit,
@@ -35,6 +37,6 @@ GROUP BY s.id, s.name, p.name, s.capacity, t.currentTemp, t.targetTemp, t.status
      */
     public function down(): void
     {
-        DB::statement("DROP VIEW storageDashboard");
+        DB::statement("DROP VIEW IF EXISTS storageDashboard");
     }
 };
