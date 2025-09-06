@@ -32,5 +32,6 @@ WHERE st.status = 'pending';
      */
     public function down(): void
     {
+        DB::statement("DROP VIEW offersDashboard");
     }
 };

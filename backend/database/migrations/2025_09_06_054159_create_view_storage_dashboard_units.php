@@ -35,6 +35,6 @@ GROUP BY s.id, s.name, p.name, s.capacity, t.currentTemp, t.targetTemp, t.status
      */
     public function down(): void
     {
-        
+        DB::statement("DROP VIEW storageDashboard");
     }
 };
