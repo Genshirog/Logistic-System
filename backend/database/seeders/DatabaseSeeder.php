@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
         TemperatureSeeder::class,
         InventorySeeder::class,
         DeliverySeeder::class,
+        FarmerMatchingSeeder::class,
         // Add more seeders here as needed
     ]);
 }
