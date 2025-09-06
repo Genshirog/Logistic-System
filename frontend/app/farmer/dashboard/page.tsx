@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { useLanguage } from "@/contexts/language-context"
-import { Thermometer, Package, TrendingUp, AlertTriangle, Plus } from "lucide-react"
+import { Thermometer, Package, TrendingUp, AlertTriangle, Plus, Users } from "lucide-react"
 
 export default function FarmerDashboard() {
   const { t } = useLanguage()
@@ -79,6 +79,36 @@ export default function FarmerDashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Access key features quickly</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-3">
+              <Button asChild className="h-auto p-4 flex flex-col items-center space-y-2">
+                <a href="/farmer/offers/new">
+                  <Plus className="h-6 w-6" />
+                  <span>New Offer</span>
+                </a>
+              </Button>
+              <Button asChild variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                <a href="/farmer/matching">
+                  <Users className="h-6 w-6" />
+                  <span>Storage Marketplace</span>
+                </a>
+              </Button>
+              <Button asChild variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                <a href="/farmer/offers">
+                  <Package className="h-6 w-6" />
+                  <span>View Offers</span>
+                </a>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Recent Offers */}
