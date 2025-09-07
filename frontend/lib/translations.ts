@@ -26,6 +26,7 @@ export interface Translations {
   nav: {
     coldChainManagement: string
     myOffers: string
+    groupStorage: string
     temperatureMonitor: string
     transactionHistory: string
     inventory: string
@@ -66,6 +67,12 @@ export interface Translations {
     storageUnitsStatus: string
     pendingOffers: string
     todaysDeliveries: string
+    groupStorage: string
+    storagePartners: string
+    sharedCosts: string
+    storageFacility: string
+    totalSavings: string
+    activeGroups: string
   }
 
   // Temperature
@@ -164,6 +171,7 @@ export const translations: Record<Language, Translations> = {
     nav: {
       coldChainManagement: "Cold Chain Management",
       myOffers: "My Offers",
+      groupStorage: "Group Storage",
       temperatureMonitor: "Temperature Monitor",
       transactionHistory: "Transaction History",
       inventory: "Inventory",
@@ -200,6 +208,12 @@ export const translations: Record<Language, Translations> = {
       storageUnitsStatus: "Storage Units Status",
       pendingOffers: "Pending Offers",
       todaysDeliveries: "Today's Deliveries",
+      groupStorage: "Group Storage",
+      storagePartners: "Storage Partners",
+      sharedCosts: "Shared Costs",
+      storageFacility: "Storage Facility",
+      totalSavings: "Total Savings",
+      activeGroups: "Active Groups",
     },
     temperature: {
       optimal: "Optimal",
@@ -288,6 +302,7 @@ export const translations: Record<Language, Translations> = {
     nav: {
       coldChainManagement: "Cold Chain Management",
       myOffers: "Mga Alok Ko",
+      groupStorage: "Group Storage",
       temperatureMonitor: "Temperature Monitor",
       transactionHistory: "Kasaysayan ng Transaction",
       inventory: "Inventory",
@@ -324,6 +339,12 @@ export const translations: Record<Language, Translations> = {
       storageUnitsStatus: "Status ng mga Storage Unit",
       pendingOffers: "Mga Naghihintay na Alok",
       todaysDeliveries: "Mga Delivery Ngayong Araw",
+      groupStorage: "Group Storage",
+      storagePartners: "Mga Storage Partner",
+      sharedCosts: "Mga Shared na Gastos",
+      storageFacility: "Storage Facility",
+      totalSavings: "Kabuuang Savings",
+      activeGroups: "Mga Aktibong Grupo",
     },
     temperature: {
       optimal: "Optimal",
@@ -412,6 +433,7 @@ export const translations: Record<Language, Translations> = {
     nav: {
       coldChainManagement: "Gestión de Cadena de Frío",
       myOffers: "Mis Ofertas",
+      groupStorage: "Almacenamiento Grupal",
       temperatureMonitor: "Monitor de Temperatura",
       transactionHistory: "Historial de Transacciones",
       inventory: "Inventario",
@@ -448,6 +470,12 @@ export const translations: Record<Language, Translations> = {
       storageUnitsStatus: "Estado de Unidades de Almacenamiento",
       pendingOffers: "Ofertas Pendientes",
       todaysDeliveries: "Entregas de Hoy",
+      groupStorage: "Almacenamiento Grupal",
+      storagePartners: "Socios de Almacenamiento",
+      sharedCosts: "Costos Compartidos",
+      storageFacility: "Instalación de Almacenamiento",
+      totalSavings: "Ahorros Totales",
+      activeGroups: "Grupos Activos",
     },
     temperature: {
       optimal: "Óptimo",

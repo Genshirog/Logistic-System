@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { NotificationBell } from "@/components/notifications/notification-bell"
 import { LanguageSwitcher } from "@/components/language/language-switcher"
 import { useLanguage } from "@/contexts/language-context"
-import { Home, Thermometer, Package, FileText, Truck, ShoppingCart, Bell, Settings, LogOut } from "lucide-react"
+import { Home, Thermometer, Package, FileText, Truck, ShoppingCart, Bell, Settings, LogOut, Users } from "lucide-react"
 import Link from "next/link"
 
 interface SidebarProps {
@@ -26,7 +26,7 @@ export function Sidebar({ userRole, className }: SidebarProps) {
 
     const roleSpecificItems = {
       farmer: [
-        { icon: Package, label: t.nav.myOffers, href: "/farmer/offers" },
+        { icon: Users, label: t.nav.groupStorage, href: "/farmer/group-storage" },
         { icon: Thermometer, label: t.nav.temperatureMonitor, href: "/farmer/temperature" },
         { icon: FileText, label: t.nav.transactionHistory, href: "/farmer/transactions" },
       ],

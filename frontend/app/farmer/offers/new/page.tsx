@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon, ArrowLeft } from "lucide-react"
-import { format } from "date-fns"
+import { format, addDays, isAfter, isBefore, differenceInDays } from "date-fns"
 import { useToast } from "@/hooks/use-toast"
 
 const offerSchema = z.object({
@@ -28,7 +28,15 @@ const offerSchema = z.object({
 	unit: z.enum(["kg", "lbs", "pieces", "boxes"], { required_error: "Select a unit" }),
 	pricePerUnit: z.coerce.number().positive("Price must be greater than 0"),
 	storageTemp: z.string({ required_error: "Select a temperature range" }),
-	expiryDate: z.date({ required_error: "Select an expiry date" }),
+	expiryDate: z.date({ 
+		required_error: "Select an expiry date" 
+	}).refine((date) => {
+		const today = new Date()
+		today.setHours(0, 0, 0, 0)
+		return isAfter(date, today) || date.toDateString() === today.toDateString()
+	}, {
+		message: "Expiry date must be today or in the future"
+	}),
 	specialRequirements: z.string().max(300).optional(),
 })
 
@@ -36,6 +44,10 @@ export default function NewOffer() {
   const [expiryDate, setExpiryDate] = useState<Date>()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
+
+  // Calculate minimum date (today) and maximum date (1 year from now)
+  const today = new Date()
+  const maxDate = addDays(today, 365) // 1 year from today
 
   const {
     register,
@@ -81,6 +93,37 @@ export default function NewOffer() {
     "8-15°C (Moderate)",
     "Room Temperature",
   ]
+
+  // Quick date selection options
+  const quickDateOptions = [
+    { label: "1 week", days: 7 },
+    { label: "2 weeks", days: 14 },
+    { label: "1 month", days: 30 },
+    { label: "3 months", days: 90 },
+    { label: "6 months", days: 180 },
+  ]
+
+  const setQuickDate = (days: number) => {
+    const newDate = addDays(today, days)
+    setExpiryDate(newDate)
+    setValue("expiryDate", newDate, { shouldValidate: true })
+  }
+
+  // Calculate days until expiry
+  const getDaysUntilExpiry = () => {
+    if (!expiryDate) return null
+    return differenceInDays(expiryDate, today)
+  }
+
+  const daysUntilExpiry = getDaysUntilExpiry()
+
+  // Get expiry status color
+  const getExpiryStatusColor = () => {
+    if (daysUntilExpiry === null) return ""
+    if (daysUntilExpiry <= 7) return "text-red-600" // Critical - expires within a week
+    if (daysUntilExpiry <= 30) return "text-orange-600" // Warning - expires within a month
+    return "text-green-600" // Good - expires in more than a month
+  }
 
   return (
     <DashboardLayout userRole="farmer" title="Submit New Offer">
@@ -216,21 +259,74 @@ export default function NewOffer() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Expiry Date</Label>
+                    <Label htmlFor="expiry-date">Expiry Date</Label>
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start text-left font-normal bg-transparent">
+                        <Button 
+                          type="button"
+                          variant="outline" 
+                          className="w-full justify-start text-left font-normal bg-transparent"
+                          aria-invalid={!!errors.expiryDate}
+                          aria-describedby={errors.expiryDate ? "expiry-date-error" : undefined}
+                        >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {expiryDate ? format(expiryDate, "PPP") : "Select expiry date"}
+                          <div className="flex flex-col items-start">
+                            <span>{expiryDate ? format(expiryDate, "PPP") : "Select expiry date"}</span>
+                            {expiryDate && daysUntilExpiry !== null && (
+                              <span className={`text-xs ${getExpiryStatusColor()}`}>
+                                {daysUntilExpiry === 0 ? "Expires today" : 
+                                 daysUntilExpiry === 1 ? "Expires tomorrow" :
+                                 `${daysUntilExpiry} days from now`}
+                              </span>
+                            )}
+                          </div>
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={expiryDate} onSelect={(d) => { setExpiryDate(d); if (d) setValue("expiryDate", d, { shouldValidate: true }) }} initialFocus />
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar 
+                          mode="single" 
+                          selected={expiryDate} 
+                          onSelect={(d) => { 
+                            setExpiryDate(d)
+                            if (d) setValue("expiryDate", d, { shouldValidate: true })
+                          }}
+                          disabled={(date) => isBefore(date, today)}
+                          initialFocus 
+                        />
+                        <div className="p-3 border-t">
+                          <p className="text-xs text-muted-foreground">
+                            Select a date from today onwards
+                          </p>
+                        </div>
                       </PopoverContent>
                     </Popover>
                     {errors.expiryDate && (
-                      <p role="alert" className="text-xs text-destructive">{errors.expiryDate.message as string}</p>
+                      <p id="expiry-date-error" role="alert" className="text-xs text-destructive">
+                        {errors.expiryDate.message as string}
+                      </p>
                     )}
+                    
+                    {/* Quick Date Selection */}
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground">Quick select:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {quickDateOptions.map((option) => (
+                          <Button
+                            key={option.label}
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setQuickDate(option.days)}
+                            className="text-xs h-7 px-2"
+                          >
+                            {option.label}
+                          </Button>
+                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        💡 Tip: Set expiry date based on your product's shelf life and storage conditions
+                      </p>
+                    </div>
                   </div>
                 </div>
 

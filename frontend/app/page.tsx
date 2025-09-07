@@ -35,6 +35,9 @@ export default function HomePage() {
               <Link href="/farmer/offers" className="text-primary hover:underline" aria-label="View Farmer Offers">
                 View Offers
               </Link>
+              <Link href="/farmer/matching" className="text-primary hover:underline" aria-label="Storage Marketplace">
+                Storage Marketplace
+              </Link>
             </CardContent>
           </Card>
 
@@ -57,24 +60,6 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card role="listitem" className="hover:shadow-md transition-shadow">
-            <CardHeader className="text-center">
-              <ShoppingCart className="h-6 w-6 mx-auto text-primary" aria-hidden="true" />
-              <CardTitle>Buyer</CardTitle>
-              <CardDescription>Marketplace and orders</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              <Link href="/buyer/dashboard" className="text-primary hover:underline" aria-label="Go to Buyer Dashboard">
-                Go to Dashboard
-              </Link>
-              <Link href="/buyer/marketplace" className="text-primary hover:underline" aria-label="Open Marketplace">
-                Marketplace
-              </Link>
-              <Link href="/buyer/orders" className="text-primary hover:underline" aria-label="View Orders">
-                Orders
-              </Link>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>
