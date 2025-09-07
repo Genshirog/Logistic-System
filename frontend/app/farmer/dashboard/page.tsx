@@ -6,23 +6,55 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { useLanguage } from "@/contexts/language-context"
-import { Thermometer, Package, TrendingUp, AlertTriangle, Plus } from "lucide-react"
+import { Thermometer, Package, TrendingUp, AlertTriangle, Plus, Users, DollarSign, MapPin, Calendar } from "lucide-react"
 
 export default function FarmerDashboard() {
   const { t } = useLanguage()
 
   // Mock data - in real app this would come from API
   const stats = {
-    activeOffers: 12,
-    totalRevenue: 45600,
+    activeGroups: 3,
+    totalSavings: 12500,
+    storagePartners: 8,
+    sharedCosts: 4500,
     avgTemperature: 4.2,
     alertsCount: 2,
   }
 
-  const recentOffers = [
-    { id: 1, product: t.products.organicTomatoes, quantity: "500 kg", status: "active", price: 2500, temperature: 4.1 },
-    { id: 2, product: t.products.freshLettuce, quantity: "200 kg", status: "accepted", price: 1200, temperature: 3.8 },
-    { id: 3, product: t.products.bellPeppers, quantity: "300 kg", status: "pending", price: 1800, temperature: 4.5 },
+  const recentGroups = [
+    { 
+      id: 1, 
+      name: "Vegetable Storage Group A", 
+      facility: "Cold Storage Facility North", 
+      location: "Quezon City",
+      partners: 4,
+      yourShare: 375,
+      savings: 125,
+      status: "active",
+      nextPayment: "2024-02-15"
+    },
+    { 
+      id: 2, 
+      name: "Fruit Storage Group B", 
+      facility: "Premium Cold Storage South", 
+      location: "Makati City",
+      partners: 3,
+      yourShare: 300,
+      savings: 100,
+      status: "active",
+      nextPayment: "2024-02-20"
+    },
+    { 
+      id: 3, 
+      name: "Herb Storage Group C", 
+      facility: "Specialized Storage East", 
+      location: "Pasig City",
+      partners: 2,
+      yourShare: 200,
+      savings: 50,
+      status: "pending",
+      nextPayment: "2024-02-25"
+    },
   ]
 
   const temperatureAlerts = [
@@ -37,90 +69,125 @@ export default function FarmerDashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t.dashboard.activeOffers}</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">{t.dashboard.activeGroups}</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.activeOffers}</div>
-              <p className="text-xs text-muted-foreground">+2 from last week</p>
+              <div className="text-2xl font-bold text-primary">{stats.activeGroups}</div>
+              <p className="text-xs text-muted-foreground">+1 from last month</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t.dashboard.totalRevenue}</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">{t.dashboard.totalSavings}</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">₱{stats.totalRevenue.toLocaleString()}</div>
+              <div className="text-2xl font-bold text-primary">₱{stats.totalSavings.toLocaleString()}</div>
               <p className="text-xs text-muted-foreground">+12% from last month</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t.dashboard.avgTemperature}</CardTitle>
-              <Thermometer className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">{t.dashboard.storagePartners}</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{stats.avgTemperature}°C</div>
-              <p className="text-xs text-muted-foreground">{t.temperature.optimal} range</p>
+              <div className="text-2xl font-bold text-primary">{stats.storagePartners}</div>
+              <p className="text-xs text-muted-foreground">Across all groups</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t.dashboard.temperatureAlerts}</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">{t.dashboard.sharedCosts}</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-destructive">{stats.alertsCount}</div>
-              <p className="text-xs text-muted-foreground">{t.temperature.attentionNeeded}</p>
+              <div className="text-2xl font-bold text-primary">₱{stats.sharedCosts.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">This month</p>
             </CardContent>
           </Card>
         </div>
 
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Access key features quickly</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-3">
+              <Button asChild className="h-auto p-4 flex flex-col items-center space-y-2">
+                <a href="/farmer/group-storage">
+                  <Users className="h-6 w-6" />
+                  <span>Group Storage</span>
+                </a>
+              </Button>
+              <Button asChild variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                <a href="/farmer/matching">
+                  <Plus className="h-6 w-6" />
+                  <span>Find Partners</span>
+                </a>
+              </Button>
+              <Button asChild variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2">
+                <a href="/farmer/offers/new">
+                  <Package className="h-6 w-6" />
+                  <span>New Offer</span>
+                </a>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Recent Offers */}
+          {/* Group Storage Overview */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>{t.dashboard.recentOffers}</CardTitle>
-                <CardDescription>Your latest produce submissions</CardDescription>
+                <CardTitle>{t.dashboard.groupStorage}</CardTitle>
+                <CardDescription>Your storage partnerships and shared costs</CardDescription>
               </div>
               <Button size="sm" asChild>
-                <a href="/farmer/offers/new">
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Offer
+                <a href="/farmer/group-storage">
+                  <Users className="h-4 w-4 mr-2" />
+                  View All
                 </a>
               </Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentOffers.map((offer) => (
-                  <div key={offer.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
+                {recentGroups.map((group) => (
+                  <div key={group.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
                     <div className="space-y-1">
-                      <p className="font-medium text-card-foreground">{offer.product}</p>
-                      <p className="text-sm text-muted-foreground">{offer.quantity}</p>
+                      <p className="font-medium text-card-foreground">{group.name}</p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <MapPin className="h-3 w-3" />
+                        {group.facility} • {group.location}
+                      </div>
                       <div className="flex items-center space-x-2">
                         <Badge
                           variant={
-                            offer.status === "active"
+                            group.status === "active"
                               ? "default"
-                              : offer.status === "accepted"
-                                ? "secondary"
-                                : "outline"
+                              : group.status === "pending"
+                                ? "outline"
+                                : "secondary"
                           }
                         >
-                          {t.orders[offer.status as keyof typeof t.orders]}
+                          {group.status.charAt(0).toUpperCase() + group.status.slice(1)}
                         </Badge>
-                        <span className="text-sm text-muted-foreground">₱{offer.price}</span>
+                        <span className="text-sm text-muted-foreground">{group.partners} partners</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Thermometer className="h-3 w-3 mr-1" />
-                        {offer.temperature}°C
+                      <div className="text-sm font-medium">₱{group.yourShare}/month</div>
+                      <div className="text-xs text-green-600">Saves ₱{group.savings}</div>
+                      <div className="flex items-center text-xs text-muted-foreground mt-1">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {group.nextPayment}
                       </div>
                     </div>
                   </div>
