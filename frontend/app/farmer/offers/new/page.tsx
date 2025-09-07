@@ -224,13 +224,6 @@ export default function NewOffer() {
                     )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="price-per-unit">Price per Unit (₱)</Label>
-                    <Input id="price-per-unit" type="number" step="0.01" placeholder="5.00" aria-invalid={!!errors.pricePerUnit} aria-describedby={errors.pricePerUnit ? "price-error" : undefined} {...register("pricePerUnit", { valueAsNumber: true })} />
-                    {errors.pricePerUnit && (
-                      <p id="price-error" role="alert" className="text-xs text-destructive">{errors.pricePerUnit.message}</p>
-                    )}
-                  </div>
                 </div>
               </div>
 

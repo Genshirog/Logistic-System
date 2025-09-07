@@ -24,7 +24,7 @@ return new class extends Migration
             
             // Ensure unique matches and prevent self-matching
             $table->unique(['farmer1_id', 'farmer2_id']);
-            $table->check('farmer1_id != farmer2_id');
+            // Note: Self-matching prevention should be handled at the application level
         });
     }
 

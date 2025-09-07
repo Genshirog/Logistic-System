@@ -133,38 +133,44 @@ export default function FarmerNotifications() {
     <DashboardLayout userRole="farmer" title="Notifications">
       <div className="space-y-6">
         {/* Header Stats */}
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <Bell className="h-4 w-4 text-primary" />
+        <div className="grid gap-6 md:grid-cols-3">
+          <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-gradient-to-br from-card to-card/50">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Bell className="h-6 w-6 text-primary" />
+                </div>
                 <div>
-                  <p className="text-sm font-medium">Total Notifications</p>
-                  <p className="text-2xl font-bold text-primary">{notifications.length}</p>
+                  <p className="text-sm font-semibold text-muted-foreground">Total Notifications</p>
+                  <p className="text-3xl font-bold text-foreground">{notifications.length}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <Bell className="h-4 w-4 text-blue-600" />
+          <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-gradient-to-br from-card to-card/50">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <Bell className="h-6 w-6 text-blue-600" />
+                </div>
                 <div>
-                  <p className="text-sm font-medium">Unread</p>
-                  <p className="text-2xl font-bold text-blue-600">{unreadCount}</p>
+                  <p className="text-sm font-semibold text-muted-foreground">Unread</p>
+                  <p className="text-3xl font-bold text-foreground">{unreadCount}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <AlertTriangle className="h-4 w-4 text-red-600" />
+          <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md bg-gradient-to-br from-card to-card/50">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500/10 to-red-500/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <AlertTriangle className="h-6 w-6 text-red-600" />
+                </div>
                 <div>
-                  <p className="text-sm font-medium">High Priority</p>
-                  <p className="text-2xl font-bold text-red-600">{highPriorityCount}</p>
+                  <p className="text-sm font-semibold text-muted-foreground">High Priority</p>
+                  <p className="text-3xl font-bold text-foreground">{highPriorityCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -182,29 +188,33 @@ export default function FarmerNotifications() {
         </div>
 
         {/* Notifications List */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {notifications.map((notification) => (
             <Card
               key={notification.id}
-              className={`transition-all hover:shadow-md ${
-                !notification.read ? "border-l-4 border-l-primary bg-card/50" : ""
-              } ${notification.priority === "high" ? "border-destructive/20" : ""}`}
+              className={`group transition-all duration-300 hover:shadow-xl border-0 shadow-md bg-gradient-to-br from-card to-card/50 ${
+                !notification.read ? "ring-2 ring-primary/20 bg-gradient-to-br from-primary/5 to-card/50" : ""
+              } ${notification.priority === "high" ? "ring-2 ring-destructive/20" : ""}`}
             >
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-full bg-muted">{getNotificationIcon(notification.type)}</div>
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-muted to-muted/50 group-hover:scale-110 transition-transform duration-300">
+                      {getNotificationIcon(notification.type)}
+                    </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <CardTitle className="text-base">{notification.title}</CardTitle>
-                        {!notification.read && <div className="w-2 h-2 bg-primary rounded-full" />}
+                      <div className="flex items-center gap-3 mb-2">
+                        <CardTitle className="text-lg font-bold">{notification.title}</CardTitle>
+                        {!notification.read && <div className="w-3 h-3 bg-primary rounded-full animate-pulse" />}
                       </div>
-                      <CardDescription className="text-sm">{notification.message}</CardDescription>
+                      <CardDescription className="text-base leading-relaxed">{notification.message}</CardDescription>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <Badge variant={getPriorityColor(notification.priority)}>{notification.priority}</Badge>
-                    <span className="text-xs text-muted-foreground">{formatTimestamp(notification.timestamp)}</span>
+                  <div className="flex flex-col items-end gap-3">
+                    <Badge variant={getPriorityColor(notification.priority)} className="rounded-full px-3 py-1">
+                      {notification.priority}
+                    </Badge>
+                    <span className="text-sm text-muted-foreground font-medium">{formatTimestamp(notification.timestamp)}</span>
                   </div>
                 </div>
               </CardHeader>
@@ -246,21 +256,15 @@ export default function FarmerNotifications() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2 mt-4">
+                  <div className="flex gap-3 mt-6">
                     {!notification.read && (
-                      <Button variant="outline" size="sm" className="bg-transparent">
-                        Mark as Read
-                      </Button>
-                    )}
-                    {notification.actionRequired && <Button size="sm">Take Action</Button>}
-                    {notification.type === "temperature_alert" && (
-                      <Button variant="outline" size="sm" className="bg-transparent">
-                        View Temperature Data
+                      <Button variant="outline" size="sm" className="bg-transparent hover:bg-primary hover:text-primary-foreground transition-all duration-300 group">
+                        <span className="group-hover:scale-105 transition-transform duration-300">Mark as Read</span>
                       </Button>
                     )}
                     {notification.type === "offer_accepted" && (
-                      <Button variant="outline" size="sm" className="bg-transparent">
-                        View Order Details
+                      <Button variant="outline" size="sm" className="bg-transparent hover:bg-blue-500 hover:text-white transition-all duration-300 group">
+                        <span className="group-hover:scale-105 transition-transform duration-300">View Order Details</span>
                       </Button>
                     )}
                   </div>
