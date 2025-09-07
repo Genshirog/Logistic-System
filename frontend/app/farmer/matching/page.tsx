@@ -318,58 +318,57 @@ export default function FarmerMatchingPage() {
     <DashboardLayout userRole="farmer" title="Storage Marketplace">
       <div className="space-y-6">
         {/* Tab Navigation */}
-        <div className="flex space-x-4 border-b">
+        <div className="flex space-x-2 p-1 bg-muted/50 rounded-xl">
           <button
             onClick={() => setActiveTab('marketplace')}
-            className={`pb-2 px-1 border-b-2 font-medium text-sm ${
+            className={`flex items-center px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-300 ${
               activeTab === 'marketplace'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
+                ? 'bg-primary text-primary-foreground shadow-lg'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
-            <Package className="h-4 w-4 inline mr-2" />
+            <Package className="h-5 w-5 mr-2" />
             Storage Marketplace
           </button>
           <button
             onClick={() => setActiveTab('matches')}
-            className={`pb-2 px-1 border-b-2 font-medium text-sm ${
+            className={`flex items-center px-6 py-3 rounded-lg font-semibold text-sm transition-all duration-300 ${
               activeTab === 'matches'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground'
+                ? 'bg-primary text-primary-foreground shadow-lg'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
-            <Heart className="h-4 w-4 inline mr-2" />
+            <Heart className="h-5 w-5 mr-2" />
             My Connections ({matches.length})
           </button>
-          
         </div>
 
         {activeTab === 'marketplace' && (
           <div className="space-y-6">
             {/* Search and Filter Bar */}
-            <Card>
-              <CardContent className="p-6">
-                <div className="space-y-4">
+            <Card className="border-0 shadow-md bg-gradient-to-br from-card to-card/50">
+              <CardContent className="p-8">
+                <div className="space-y-6">
                   {/* Search Bar */}
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <Input
                       placeholder="Search farmers, locations, or produce types..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
+                      className="pl-12 h-12 text-base rounded-xl border-2 focus:border-primary transition-all duration-300"
                     />
                   </div>
 
                   {/* Filters Row */}
                   <div className="flex flex-wrap gap-4 items-center">
-                    <div className="flex items-center space-x-2">
-                      <Filter className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">Filters:</span>
+                    <div className="flex items-center space-x-3">
+                      <Filter className="h-5 w-5 text-muted-foreground" />
+                      <span className="text-base font-semibold">Filters:</span>
                     </div>
 
                     <Select value={filterStorageType} onValueChange={(value: any) => setFilterStorageType(value)}>
-                      <SelectTrigger className="w-48">
+                      <SelectTrigger className="w-52 h-11 rounded-xl border-2 focus:border-primary transition-all duration-300">
                         <SelectValue placeholder="Storage Type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -380,7 +379,7 @@ export default function FarmerMatchingPage() {
                     </Select>
 
                     <Select value={filterProduceType} onValueChange={setFilterProduceType}>
-                      <SelectTrigger className="w-48">
+                      <SelectTrigger className="w-52 h-11 rounded-xl border-2 focus:border-primary transition-all duration-300">
                         <SelectValue placeholder="Produce Type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -392,7 +391,7 @@ export default function FarmerMatchingPage() {
                     </Select>
 
                     <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
-                      <SelectTrigger className="w-48">
+                      <SelectTrigger className="w-52 h-11 rounded-xl border-2 focus:border-primary transition-all duration-300">
                         <SelectValue placeholder="Sort By" />
                       </SelectTrigger>
                       <SelectContent>
@@ -407,8 +406,9 @@ export default function FarmerMatchingPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                      className="h-11 px-4 rounded-xl border-2 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
                     >
-                      {sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
+                      {sortOrder === 'asc' ? <SortAsc className="h-5 w-5" /> : <SortDesc className="h-5 w-5" />}
                     </Button>
 
                     <div className="flex items-center space-x-2 ml-auto">
@@ -416,15 +416,17 @@ export default function FarmerMatchingPage() {
                         variant={viewMode === 'grid' ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => setViewMode('grid')}
+                        className="h-11 px-4 rounded-xl transition-all duration-300"
                       >
-                        <Grid className="h-4 w-4" />
+                        <Grid className="h-5 w-5" />
                       </Button>
                       <Button
                         variant={viewMode === 'list' ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => setViewMode('list')}
+                        className="h-11 px-4 rounded-xl transition-all duration-300"
                       >
-                        <List className="h-4 w-4" />
+                        <List className="h-5 w-5" />
                       </Button>
                     </div>
                   </div>
