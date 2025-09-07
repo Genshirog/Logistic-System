@@ -32,7 +32,6 @@ export function Sidebar({ userRole, className }: SidebarProps) {
         { icon: Package, label: t.nav.inventory, href: "/storage/inventory" },
         { icon: Thermometer, label: t.nav.temperatureControl, href: "/storage/temperature" },
         { icon: Truck, label: t.nav.deliveries, href: "/storage/deliveries" },
-        { icon: FileText, label: t.nav.transactionLogs, href: "/storage/transactions" },
       ],
       buyer: [
         { icon: ShoppingCart, label: t.nav.marketplace, href: "/buyer/marketplace" },
