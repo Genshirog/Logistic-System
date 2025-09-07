@@ -67,47 +67,57 @@ class FarmerMatchingController extends Controller
     }
 
     /**
-     * Send connection request to another farmer
+     * Create instant connection between farmers
      */
-    public function sendConnectionRequest(Request $request): JsonResponse
+    public function createConnection(Request $request): JsonResponse
     {
         $request->validate([
-            'sender_id' => 'required|exists:farmers,id',
-            'receiver_id' => 'required|exists:farmers,id|different:sender_id',
-            'message' => 'nullable|string|max:500'
+            'farmer1_id' => 'required|exists:farmers,id',
+            'farmer2_id' => 'required|exists:farmers,id|different:farmer1_id'
         ]);
 
-        $sender = Farmer::findOrFail($request->sender_id);
-        $receiver = Farmer::findOrFail($request->receiver_id);
+        $farmer1 = Farmer::findOrFail($request->farmer1_id);
+        $farmer2 = Farmer::findOrFail($request->farmer2_id);
 
-        // Check if already connected or has pending request
-        $existingMatch = FarmerMatch::where(function ($query) use ($sender, $receiver) {
-            $query->where('farmer1_id', $sender->id)->where('farmer2_id', $receiver->id)
-                  ->orWhere('farmer1_id', $receiver->id)->where('farmer2_id', $sender->id);
+        // Check if already connected
+        $existingMatch = FarmerMatch::where(function ($query) use ($farmer1, $farmer2) {
+            $query->where('farmer1_id', $farmer1->id)->where('farmer2_id', $farmer2->id)
+                  ->orWhere('farmer1_id', $farmer2->id)->where('farmer2_id', $farmer1->id);
         })->first();
 
         if ($existingMatch) {
             return response()->json([
                 'success' => false,
-                'message' => 'Already connected or has pending request'
+                'message' => 'Already connected with this farmer'
             ], 400);
         }
 
-        // Create connection request (pending match)
+        // Create instant connection
         $match = FarmerMatch::create([
-            'farmer1_id' => $sender->id,
-            'farmer2_id' => $receiver->id,
-            'status' => 'pending',
-            'compatibility_score' => $sender->calculateCompatibilityWith($receiver),
-            'match_reasons' => $this->getMatchReasons($sender, $receiver),
-            'matched_at' => now()
+            'farmer1_id' => $farmer1->id,
+            'farmer2_id' => $farmer2->id,
+            'status' => 'accepted',
+            'compatibility_score' => $farmer1->calculateCompatibilityWith($farmer2),
+            'match_reasons' => $this->getMatchReasons($farmer1, $farmer2),
+            'matched_at' => now(),
+            'responded_at' => now()
+        ]);
+
+        // Create chat room immediately
+        $chat = FarmerChat::create([
+            'farmer1_id' => $farmer1->id,
+            'farmer2_id' => $farmer2->id,
+            'match_id' => $match->id,
+            'is_active' => true,
+            'last_message_at' => now()
         ]);
 
         return response()->json([
             'success' => true,
             'data' => [
                 'match' => $match,
-                'message' => 'Connection request sent successfully'
+                'chat' => $chat,
+                'message' => 'Connection established successfully! You can now chat and arrange storage sharing.'
             ]
         ]);
     }

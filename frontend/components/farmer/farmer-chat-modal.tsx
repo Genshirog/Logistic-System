@@ -35,11 +35,17 @@ interface Message {
 interface FarmerChatModalProps {
   chatId: number
   farmerId: number
+  connectedFarmer: {
+    id: number
+    name: string
+    location: string
+    profile_image?: string
+  }
   isOpen: boolean
   onClose: () => void
 }
 
-export function FarmerChatModal({ chatId, farmerId, isOpen, onClose }: FarmerChatModalProps) {
+export function FarmerChatModal({ chatId, farmerId, connectedFarmer, isOpen, onClose }: FarmerChatModalProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState("")
   const [loading, setLoading] = useState(false)
@@ -50,12 +56,12 @@ export function FarmerChatModal({ chatId, farmerId, isOpen, onClose }: FarmerCha
   const mockMessages: Message[] = [
     {
       id: 1,
-      message: "Hi! I saw we matched. I'm interested in sharing storage space with you.",
+      message: "Hi! I saw we connected. I'm interested in sharing storage space with you.",
       message_type: 'text',
       sender: {
-        id: 2,
-        name: "Maria Santos",
-        profile_image: "/placeholder-user.jpg"
+        id: connectedFarmer.id,
+        name: connectedFarmer.name,
+        profile_image: connectedFarmer.profile_image
       },
       is_read: true,
       created_at: "2024-01-10T10:30:00Z"
@@ -84,9 +90,9 @@ export function FarmerChatModal({ chatId, farmerId, isOpen, onClose }: FarmerCha
         total_cost: 15000
       },
       sender: {
-        id: 2,
-        name: "Maria Santos",
-        profile_image: "/placeholder-user.jpg"
+        id: connectedFarmer.id,
+        name: connectedFarmer.name,
+        profile_image: connectedFarmer.profile_image
       },
       is_read: false,
       created_at: "2024-01-10T10:40:00Z"
@@ -246,7 +252,7 @@ export function FarmerChatModal({ chatId, farmerId, isOpen, onClose }: FarmerCha
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <MessageSquare className="h-5 w-5" />
-            <span>Chat with Maria Santos</span>
+            <span>Chat with {connectedFarmer.name}</span>
           </DialogTitle>
         </DialogHeader>
 

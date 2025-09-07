@@ -28,7 +28,7 @@ interface Match {
 
 interface FarmerMatchesListProps {
   matches: Match[]
-  onOpenChat: (chatId: number) => void
+  onOpenChat: (chatId: number, farmer: { id: number; name: string; location: string; profile_image?: string }) => void
 }
 
 export function FarmerMatchesList({ matches, onOpenChat }: FarmerMatchesListProps) {
@@ -122,7 +122,7 @@ export function FarmerMatchesList({ matches, onOpenChat }: FarmerMatchesListProp
               {/* Action Button */}
               <Button
                 className="w-full"
-                onClick={() => match.chat_id && onOpenChat(match.chat_id)}
+                onClick={() => match.chat_id && onOpenChat(match.chat_id, match.farmer)}
                 disabled={!match.chat_id}
               >
                 <MessageCircle className="h-4 w-4 mr-2" />

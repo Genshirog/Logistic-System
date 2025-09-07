@@ -7,6 +7,7 @@ use App\Http\Controllers\StorageTempController;
 use App\Http\Controllers\StorageNotificationController;
 use App\Http\Controllers\FarmerMatchingController;
 use App\Http\Controllers\FarmerChatController;
+use App\Http\Controllers\GroupStorageController;
 use Illuminate\Support\Facades\Route;
 
 // Storage routes
@@ -23,9 +24,7 @@ Route::get('/storage/notification/notifications',[StorageNotificationController:
 Route::prefix('api/farmer')->group(function () {
     // Marketplace routes
     Route::get('/{farmerId}/potential-matches', [FarmerMatchingController::class, 'getPotentialMatches']);
-    Route::post('/send-connection-request', [FarmerMatchingController::class, 'sendConnectionRequest']);
-    Route::post('/respond-connection-request', [FarmerMatchingController::class, 'respondToConnectionRequest']);
-    Route::get('/{farmerId}/pending-requests', [FarmerMatchingController::class, 'getPendingRequests']);
+    Route::post('/create-connection', [FarmerMatchingController::class, 'createConnection']);
     Route::get('/{farmerId}/matches', [FarmerMatchingController::class, 'getMatches']);
     
     // Chat routes
@@ -33,4 +32,13 @@ Route::prefix('api/farmer')->group(function () {
     Route::get('/chat/{chatId}/messages/{farmerId}', [FarmerChatController::class, 'getMessages']);
     Route::post('/chat/send-message', [FarmerChatController::class, 'sendMessage']);
     Route::post('/chat/send-storage-proposal', [FarmerChatController::class, 'sendStorageProposal']);
+    
+    // Group Storage routes
+    Route::get('/{farmerId}/group-storage/stats', [GroupStorageController::class, 'getStats']);
+    Route::get('/{farmerId}/group-storage/groups', [GroupStorageController::class, 'getGroups']);
+    Route::get('/{farmerId}/group-storage/groups/{groupId}', [GroupStorageController::class, 'getGroupDetails']);
+    Route::get('/{farmerId}/group-storage/cost-breakdown', [GroupStorageController::class, 'getCostBreakdown']);
 });
+
+// Storage facilities routes
+Route::get('/api/storage-facilities', [GroupStorageController::class, 'getStorageFacilities']);

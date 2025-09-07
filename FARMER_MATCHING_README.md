@@ -28,8 +28,8 @@ A marketplace-style platform for farmers to find storage partners and share cold
 - **Browse & Search**: Search and filter farmers by location, produce type, and storage needs
 - **Grid & List Views**: Toggle between grid and list views for different browsing preferences
 - **Advanced Filtering**: Filter by storage type, produce type, distance, and compatibility
-- **Connection Requests**: Send connection requests instead of instant matching
-- **Pending Requests**: Manage incoming connection requests with accept/decline options
+- **Instant Connections**: Click "Connect" to instantly establish partnerships
+- **Automatic Tracking**: Connected farmers are automatically added to your connections list
 
 ## Database Schema
 
@@ -60,10 +60,8 @@ A marketplace-style platform for farmers to find storage partners and share cold
 
 ### Marketplace
 - `GET /api/farmer/{farmerId}/potential-matches` - Get potential matches
-- `POST /api/farmer/send-connection-request` - Send connection request
-- `POST /api/farmer/respond-connection-request` - Accept/reject connection request
-- `GET /api/farmer/{farmerId}/pending-requests` - Get pending connection requests
-- `GET /api/farmer/{farmerId}/matches` - Get accepted matches
+- `POST /api/farmer/create-connection` - Create instant connection
+- `GET /api/farmer/{farmerId}/matches` - Get connected farmers
 
 ### Chat
 - `GET /api/farmer/{farmerId}/chats` - Get all chats for farmer
@@ -80,7 +78,6 @@ A marketplace-style platform for farmers to find storage partners and share cold
 - `FarmerMarketplaceCard` - Marketplace-style farmer cards with detailed information
 - `FarmerMatchesList` - Grid of connected farmers with chat access
 - `FarmerChatModal` - Chat interface with message history and proposals
-- `PendingRequestsModal` - Modal for managing incoming connection requests
 
 ## Compatibility Algorithm
 
@@ -110,22 +107,22 @@ The matching system uses a weighted scoring algorithm:
 3. Set temperature requirements
 4. Add produce types
 5. Browse marketplace to find farmers with excess storage
-6. Send connection requests to compatible farmers
+6. Click "Connect" to instantly establish partnerships
 
 ### For Farmers with Excess Storage
 1. Set `has_excess_storage = true`
 2. Set `cost_per_cubic_meter`
 3. Specify available capacity
 4. Set temperature ranges
-5. Wait for connection requests from farmers needing storage
-6. Accept or decline requests based on compatibility
+5. Wait for other farmers to connect with you
+6. Manage connections through your connections list
 
 ### Marketplace Features
 1. **Search & Filter**: Use search bar and filters to find specific farmers
 2. **Browse**: View farmers in grid or list format
-3. **Connect**: Send connection requests instead of instant matching
-4. **Manage Requests**: Accept or decline incoming connection requests
-5. **Chat**: Once connected, farmers can chat and make storage proposals
+3. **Instant Connect**: Click "Connect" to immediately establish partnerships
+4. **Automatic Tracking**: Connected farmers are added to your connections list
+5. **Chat & Propose**: Once connected, farmers can chat and make storage proposals
 
 ## Benefits
 

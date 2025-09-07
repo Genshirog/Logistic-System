@@ -26,7 +26,6 @@ import {
 import { FarmerMarketplaceCard } from "@/components/farmer/farmer-marketplace-card"
 import { FarmerMatchesList } from "@/components/farmer/farmer-matches-list"
 import { FarmerChatModal } from "@/components/farmer/farmer-chat-modal"
-import { PendingRequestsModal } from "@/components/farmer/pending-requests-modal"
 
 interface FarmerProfile {
   id: number
@@ -68,9 +67,13 @@ export default function FarmerMatchingPage() {
   const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedChat, setSelectedChat] = useState<number | null>(null)
+  const [selectedConnectedFarmer, setSelectedConnectedFarmer] = useState<{
+    id: number
+    name: string
+    location: string
+    profile_image?: string
+  } | null>(null)
   const [showChatModal, setShowChatModal] = useState(false)
-  const [showPendingRequests, setShowPendingRequests] = useState(false)
-  const [pendingRequestsCount, setPendingRequestsCount] = useState(0)
   
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState("")
@@ -86,7 +89,6 @@ export default function FarmerMatchingPage() {
   useEffect(() => {
     loadPotentialMatches()
     loadMatches()
-    loadPendingRequestsCount()
   }, [])
 
   useEffect(() => {
@@ -266,28 +268,49 @@ export default function FarmerMatchingPage() {
     try {
       // Mock API call - replace with actual API call
       console.log(`Connecting with farmer ${farmerId}`)
-      // In real implementation, this would create a match or send a connection request
+      
+      // Create instant connection
+      const newConnection = {
+        id: Date.now(),
+        farmer: {
+          id: farmerId,
+          name: potentialMatches.find(f => f.id === farmerId)?.name || "Unknown Farmer",
+          location: potentialMatches.find(f => f.id === farmerId)?.location || "Unknown Location",
+          profile_image: "/placeholder-user.jpg"
+        },
+        compatibility_score: potentialMatches.find(f => f.id === farmerId)?.compatibility_score || 0,
+        matched_at: new Date().toISOString(),
+        chat_id: Date.now(),
+        unread_count: 0
+      }
+      
+      // Add to connections list
+      setMatches(prev => [newConnection, ...prev])
+      
+      // Remove from potential matches
+      setPotentialMatches(prev => prev.filter(f => f.id !== farmerId))
+      setFilteredMatches(prev => prev.filter(f => f.id !== farmerId))
+      
+      // Show success message
+      console.log('Connection established successfully!')
+      
+      // You could add a toast notification here
+      // toast({ title: "Connection Established!", description: `You're now connected with ${newConnection.farmer.name}` })
+      
     } catch (error) {
       console.error('Error connecting:', error)
     }
   }
 
-  const loadPendingRequestsCount = async () => {
-    try {
-      // Mock API call - replace with actual API call
-      setPendingRequestsCount(2) // Mock count
-    } catch (error) {
-      console.error('Error loading pending requests count:', error)
-    }
-  }
 
   const getUniqueProduceTypes = () => {
     const allTypes = potentialMatches.flatMap(farmer => farmer.produce_types)
     return Array.from(new Set(allTypes))
   }
 
-  const openChat = (chatId: number) => {
+  const openChat = (chatId: number, connectedFarmer: { id: number; name: string; location: string; profile_image?: string }) => {
     setSelectedChat(chatId)
+    setSelectedConnectedFarmer(connectedFarmer)
     setShowChatModal(true)
   }
 
@@ -319,19 +342,6 @@ export default function FarmerMatchingPage() {
             My Connections ({matches.length})
           </button>
           
-          {/* Pending Requests Button */}
-          {pendingRequestsCount > 0 && (
-            <button
-              onClick={() => setShowPendingRequests(true)}
-              className="pb-2 px-1 border-b-2 border-transparent text-muted-foreground hover:text-foreground relative"
-            >
-              <MessageCircle className="h-4 w-4 inline mr-2" />
-              Requests
-              <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 text-xs flex items-center justify-center">
-                {pendingRequestsCount}
-              </Badge>
-            </button>
-          )}
         </div>
 
         {activeTab === 'marketplace' && (
@@ -476,35 +486,25 @@ export default function FarmerMatchingPage() {
         {activeTab === 'matches' && (
           <FarmerMatchesList
             matches={matches}
-            onOpenChat={openChat}
+            onOpenChat={(chatId, farmer) => openChat(chatId, farmer)}
           />
         )}
 
         {/* Chat Modal */}
-        {showChatModal && selectedChat && (
+        {showChatModal && selectedChat && selectedConnectedFarmer && (
           <FarmerChatModal
             chatId={selectedChat}
             farmerId={currentFarmerId}
+            connectedFarmer={selectedConnectedFarmer}
             isOpen={showChatModal}
             onClose={() => {
               setShowChatModal(false)
               setSelectedChat(null)
+              setSelectedConnectedFarmer(null)
             }}
           />
         )}
 
-        {/* Pending Requests Modal */}
-        {showPendingRequests && (
-          <PendingRequestsModal
-            isOpen={showPendingRequests}
-            onClose={() => setShowPendingRequests(false)}
-            farmerId={currentFarmerId}
-            onRequestResponded={() => {
-              setPendingRequestsCount(prev => Math.max(0, prev - 1))
-              loadMatches() // Refresh matches list
-            }}
-          />
-        )}
       </div>
     </DashboardLayout>
   )
