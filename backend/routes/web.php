@@ -19,7 +19,6 @@ Route::get('/storage/delivery/deliveries',[StorageDeliveryController::class,'del
 Route::get('/storage/inventory/inventories',[StorageInventoryController::class,'inventories']);
 Route::get('/storage/temperature/units',[StorageTempController::class,'tempUnits']);
 Route::get('/storage/notification/notifications',[StorageNotificationController::class,'notifications']);
-
 // Farmer matching routes
 Route::prefix('api/farmer')->group(function () {
     // Marketplace routes
