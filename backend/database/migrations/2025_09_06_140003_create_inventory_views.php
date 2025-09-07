@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('DROP VIEW IF EXISTS inventory_views');
+        DB::statement('DROP VIEW IF EXISTS storageUnitOverview');
         DB::statement("
         CREATE VIEW storageUnitOverview AS
 SELECT
@@ -44,6 +44,6 @@ LEFT JOIN temps t ON s.id = t.storage_id
      */
     public function down(): void
     {
-        DB::statement('DROP VIEW IF EXISTS inventory_views');
+        DB::statement('DROP VIEW IF EXISTS storageUnitOverview');
     }
 };
