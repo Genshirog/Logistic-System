@@ -15,6 +15,7 @@ export default function TemperatureControl() {
   // TODO: Subscribe to WebSocket/Server-Sent Events for real-time telemetry (e.g., ws://.../storage/units)
   // TODO: On control updates, call POST /api/storage/units/:id/target { targetTemp, targetHumidity }
   type TemperatureUnits = {
+    dbId: number;
     id: string;
     name: string;
     product: string;
@@ -31,6 +32,35 @@ export default function TemperatureControl() {
 
   }
   
+  const handleTogglePower = async (unitId: number, currentStatus: string) => {
+  // Determine new status
+  const newStatus = currentStatus === "on" ? "off" : "on";
+
+  // Optimistically update UI
+  setTempUnit(prev =>
+    prev.map(unit =>
+      unit.dbId === unitId ? { ...unit, powerStatus: newStatus } : unit
+    )
+  );
+
+  // Send update to backend
+  try {
+    await axios.post(`http://127.0.0.1:8000/api/storage/units/${unitId}/power`, {
+      powerStatus: newStatus, 
+    });
+    // Optionally, re-fetch data here if backend may override
+  } catch (error) {
+    // Rollback UI if error
+    setTempUnit(prev =>
+      prev.map(unit =>
+        unit.dbId === unitId ? { ...unit, powerStatus: currentStatus } : unit
+      )
+    );
+    alert("Failed to update power status.");
+  }
+};
+
+
   const fetchData = async <T,>(url:string): Promise<T> => {
     const response = await axios.get<T>(url);
     return response.data;
@@ -38,17 +68,26 @@ export default function TemperatureControl() {
 
   const [temperatureUnits, setTempUnit] = useState<TemperatureUnits[]>([]);
 
-  useEffect(() => {
-    (async () =>{
-      try{
-        const [tempData] = await Promise.all([
-          fetchData<TemperatureUnits[]>("http://127.0.0.1:8000/storage/temperature/units"),
-        ]);
-        setTempUnit(tempData);
-      }catch(error){
+    useEffect(() => {
+    const fetchUnits = async () => {
+      try {
+        const tempData = await fetchData<TemperatureUnits[]>("http://127.0.0.1:8000/storage/temperature/units");
+        setTempUnit(
+          tempData.map(unit => ({
+            ...unit,
+            alerts: Array.isArray(unit.alerts) ? unit.alerts : []
+          }))
+        );
+      } catch (error) {
         console.error("Error fetching temperature data", error);
       }
-    })();
+    };
+
+    fetchUnits(); // Initial fetch
+
+    const interval = setInterval(fetchUnits, 5000); // Every 5 seconds
+
+    return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
   const getStatusColor = (status: string) => {
@@ -268,10 +307,6 @@ export default function TemperatureControl() {
                     <Settings className="h-3 w-3 mr-1" />
                     Settings
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-                    <RefreshCw className="h-3 w-3 mr-1" />
-                    Refresh
-                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -280,6 +315,7 @@ export default function TemperatureControl() {
                         ? "text-red-600 hover:text-red-700"
                         : "text-green-600 hover:text-green-700"
                     }
+                    onClick={() => handleTogglePower(unit.dbId, unit.powerStatus)}
                   >
                     <Power className="h-3 w-3" />
                   </Button>
@@ -287,7 +323,7 @@ export default function TemperatureControl() {
                 {/* TODO: Implement Power toggle via POST /api/storage/units/:id/power { powerStatus } with confirmation dialog */}
 
                 {/* Alerts */}
-                {unit.alerts.length > 0 && (
+                {(unit.alerts?.length ?? 0) > 0 && (
                   <div className="p-3 bg-muted rounded-lg">
                     <p className="text-sm font-medium text-card-foreground mb-2">Active Alerts</p>
                     <div className="space-y-1">
